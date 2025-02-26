@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./DrumMachine.css";
+import React, { useEffect, useState, useCallback } from "react";
 
 const drumPads = [
   { key: "Q", sound: "Heater 1", src: "https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3" },
@@ -26,15 +24,16 @@ const DrumMachine = () => {
     }
   };
 
-  const handleKeyPress = (event) => {
+  // Wrap handleKeyPress in useCallback to prevent unnecessary re-creation
+  const handleKeyPress = useCallback((event) => {
     const pad = drumPads.find(pad => pad.key === event.key.toUpperCase());
     if (pad) playSound(pad.key, pad.sound);
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyPress);
     return () => document.removeEventListener("keydown", handleKeyPress);
-  }, []);
+  }, [handleKeyPress]); // ✅ Now properly includes handleKeyPress
 
   return (
     <div id="drum-machine" className="container text-center mt-5 p-4 border rounded shadow bg-dark text-light">
